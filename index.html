@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="hi">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>LZR Panel</title>  
+  <style>  
+    :root{  
+      --bg:#0f1115; --card:#151923; --muted:#8a93a6; --text:#e6e9f2; --accent:#6ee7ff; --accent2:#7c4dff;  
+      --ok:#22c55e; --err:#ef4444;  
+    }  
+    body{  
+      margin:0; min-height:100vh; display:grid; place-items:center;  
+      background:#0f1115; color:var(--text); font-family:sans-serif;  
+    }  
+    .card{background:#151923; padding:20px; border-radius:16px; width:min(400px,90vw)}  
+    .title{font-size:22px;font-weight:700;text-align:center;margin-bottom:16px}  
+    .btn{margin-top:12px;width:100%;padding:12px 14px;border:none;border-radius:12px;  
+      background:linear-gradient(135deg,var(--accent),var(--accent2));color:#071018;font-weight:700;cursor:pointer}  
+    .row{margin-top:16px;display:flex;justify-content:space-between}  
+    .badge{padding:6px 10px;border-radius:10px;background:#0b0e14;border:1px solid #333;font-size:13px}  
+  </style>  
+</head>  
+<body>  
+  <div class="card">  
+    <div class="title">LZR TITLE CHANGER</div>  
+    
+    <button id="addBtn" class="btn">CHANGE LZR ACTIVE</button>  
+    <button id="removeBtn" class="btn">deposit Lzr Active</button>  
+    
+    <div class="row">  
+      <div class="badge">Current: <span id="current">—</span></div>  
+      <div class="badge">Status: <span id="status">idle</span></div>  
+    </div>  
+  </div>  
+
+  <script>  
+    const DB_URL = "https://drid-18095-default-rtdb.firebaseio.com";   
+    const PATH   = "/lzr/ap/ap";   
+    
+    const $ = (q) => document.querySelector(q);  
+    const setStatus = (t) => $("#status").textContent = t;  
+    
+    async function saveValue(value){  
+      try{  
+        setStatus("saving…");  
+        const res = await fetch(`${DB_URL}${PATH}.json`, {  
+          method: "PUT",  
+          headers: { "Content-Type": "application/json" },  
+          body: JSON.stringify(value)  
+        });  
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);  
+        $("#current").textContent = value ?? "—";  
+        setStatus("saved");  
+      }catch(err){  
+        setStatus("error");  
+        alert("Save failed: " + err.message);  
+      }  
+    }  
+    
+    // Button Actions  
+    $("#addBtn").addEventListener("click", ()=> saveValue("DEPOSIT LZR ACTIVE"));  
+    $("#removeBtn").addEventListener("click", ()=> saveValue(null));  
+  </script>  
+</body>  
+</html>
